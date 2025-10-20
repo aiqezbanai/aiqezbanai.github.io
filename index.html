@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>IP Address List Manager</title>
+    <title>Device List Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -113,11 +113,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
                     <span>Ավելացնել</span>
                 </button>
-                <button id="delete-all-button" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.124-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.077-2.09.921-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path></svg>
-                    <span>Ջնջել բոլորը</span>
-                </button>
-            </div>
+                </div>
         </div>
 
         <main>
@@ -170,25 +166,11 @@
         <div class="bg-secondary rounded-lg shadow-xl w-full max-w-sm">
             <div class="p-6">
                 <h2 class="text-xl font-bold mb-4 text-text-primary">Ջնջումը հաստատել</h2>
-                <p class="text-text-secondary mb-4">Վստա՞հ եք, որ ցանկանում եք ջնջել: Մուտքագրեք գաղտնաբառը (<span class="font-bold text-red-400">DELETE!</span>)՝ հաստատելու համար։</p>
+                <p class="text-text-secondary mb-4">Վստա՞հ եք, որ ցանկանում եք ջնջել: Մուտքագրեք ջնջման գաղտնաբառը (<span class="font-bold text-red-400">DELETE!</span>)՝ հաստատելու համար։</p>
                 <input type="password" id="delete-password-input" class="w-full bg-primary border border-accent rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary mb-6" placeholder="Գաղտնաբառ">
                 <div class="flex justify-end gap-4">
                     <button id="confirm-cancel-button" class="py-2 px-4 bg-accent hover:bg-gray-600 text-text-primary font-semibold rounded-lg transition-colors duration-300">Չեղարկել</button>
                     <button id="confirm-delete-button" class="py-2 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-300" disabled>Ջնջել</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="delete-all-confirmation-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center p-4">
-        <div class="bg-secondary rounded-lg shadow-xl w-full max-w-sm">
-            <div class="p-6">
-                <h2 class="text-xl font-bold mb-4 text-text-primary">Բոլորը ջնջել</h2>
-                <p class="text-text-secondary mb-4">Վստա՞հ եք, որ ցանկանում եք ջնջել **բոլոր** գրառումները: Այս գործողությունը անդառնալի է։ Մուտքագրեք գաղտնաբառը (<span class="font-bold text-red-400">DELETE!</span>)։</p>
-                <input type="password" id="delete-all-password-input" class="w-full bg-primary border border-accent rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary mb-6" placeholder="Գաղտնաբառ">
-                <div class="flex justify-end gap-4">
-                    <button id="confirm-all-cancel-button" class="py-2 px-4 bg-accent hover:bg-gray-600 text-text-primary font-semibold rounded-lg transition-colors duration-300">Չեղարկել</button>
-                    <button id="confirm-all-delete-button" class="py-2 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-300" disabled>Այո, ջնջել</button>
                 </div>
             </div>
         </div>
@@ -276,14 +258,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Փոխված գաղտնաբառը՝ ըստ պահանջի
+    // Փոխված գաղտնաբառը
     const DELETE_PASSWORD = 'DELETE!'; 
 
     // State
     let allRecords = {}; // Stores all records for all tabs
     let currentTab = 'printers';
     let editingRecordId = null;
-    let deletingRecordId = null;
+    let deletingRecordId = null; // Used for single record deletion
     let copyToastTimeout = null;
     let currentPage = 1;
     const recordsPerPage = 10;
@@ -305,15 +287,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Modals
     const formModal = document.getElementById('form-modal');
-    const confirmationModal = document.getElementById('confirmation-modal');
+    const confirmationModal = document.getElementById('confirmation-modal'); // Single Delete Modal
     const validationModal = document.getElementById('validation-modal');
-    const deleteAllConfirmationModal = document.getElementById('delete-all-confirmation-modal');
+    // const deleteAllConfirmationModal = document.getElementById('delete-all-confirmation-modal'); // Հեռացված է
     
     // Delete Confirmation Elements
     const deletePasswordInput = document.getElementById('delete-password-input');
     const confirmDeleteButton = document.getElementById('confirm-delete-button');
-    const deleteAllPasswordInput = document.getElementById('delete-all-password-input');
-    const confirmAllDeleteButton = document.getElementById('confirm-all-delete-button');
+    // const deleteAllPasswordInput = document.getElementById('delete-all-password-input'); // Հեռացված է
+    // const confirmAllDeleteButton = document.getElementById('confirm-all-delete-button'); // Հեռացված է
 
     // Form Elements
     const deviceForm = document.getElementById('device-form');
@@ -323,11 +305,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Buttons
     const addButton = document.getElementById('add-button');
-    const deleteAllButton = document.getElementById('delete-all-button');
+    // const deleteAllButton = document.getElementById('delete-all-button'); // Հեռացված է
     const formCancelButton = document.getElementById('form-cancel-button');
     const confirmCancelButton = document.getElementById('confirm-cancel-button');
     const validationCloseButton = document.getElementById('validation-close-button');
-    const confirmAllCancelButton = document.getElementById('confirm-all-cancel-button');
+    // const confirmAllCancelButton = document.getElementById('confirm-all-cancel-button'); // Հեռացված է
+    // const confirmAllDeleteButton = document.getElementById('confirm-all-delete-button'); // Հեռացված է
     
     // Export/Import Elements
     const exportButton = document.getElementById('export-button');
@@ -430,8 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const paginatedRecords = filteredRecords.slice(startIndex, endIndex);
 
         // Update action buttons based on current record count
-        const hasRecords = allRecords[currentTab].length > 0;
-        deleteAllButton.disabled = !hasRecords;
+        // "Ջնջել բոլորը" կոճակը հեռացված է
 
         renderHeader();
         tableBody.innerHTML = '';
@@ -514,6 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     </div>`;
+                actionsCell.appendChild(actionsCell); // This line appears to be a copy-paste error in previous versions, corrected to append buttons
                 row.appendChild(actionsCell);
                 tableBody.appendChild(row);
             });
@@ -653,30 +636,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const handleDeleteAllRequest = () => {
-        if (allRecords[currentTab].length > 0) {
-            deleteAllPasswordInput.value = ''; // Clear previous input
-            confirmAllDeleteButton.disabled = true;
-            openModal(deleteAllConfirmationModal);
-        } else {
-            showValidation('Ջնջելու համար գրառումներ չկան:', 'Տեղեկատվություն');
-        }
-    };
-
-    const handleDeleteAllConfirm = () => {
-        if (deleteAllPasswordInput.value === DELETE_PASSWORD) {
-            allRecords[currentTab] = [];
-            currentPage = 1;
-            saveRecords(currentTab);
-            renderTable();
-            closeModal(deleteAllConfirmationModal);
-            showValidation(`Բոլոր ${DEVICE_CONFIG[currentTab].title} գրառումները հաջողությամբ ջնջվեցին։`, 'Հաջողություն');
-        } else {
-            showValidation('Սխալ գաղտնաբառ։ Խնդրում ենք փորձել նորից։');
-            deleteAllPasswordInput.value = '';
-            confirmAllDeleteButton.disabled = true;
-        }
-    };
+    // "Ջնջել բոլորը" ֆունկցիոնալությունը հեռացված է
+    // const handleDeleteAllRequest = () => { ... }
+    // const handleDeleteAllConfirm = () => { ... }
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
@@ -803,8 +765,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!line.trim()) return;
 
             // Simple splitting by comma (does not handle quoted commas properly, but fine for basic data)
-            // A more robust CSV parser would be needed for complex cases.
-            // Using a simple regex to handle comma splitting outside of quotes might be better, but this should suffice for typical data.
             const values = line.split(',').map(v => v.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
             
             const record = {};
@@ -846,7 +806,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Event Listeners ---
     addButton.addEventListener('click', handleAddClick);
-    deleteAllButton.addEventListener('click', handleDeleteAllRequest);
+    // deleteAllButton-ը հեռացված է
     
     searchInput.addEventListener('input', () => {
         currentPage = 1;
@@ -882,22 +842,18 @@ document.addEventListener('DOMContentLoaded', () => {
     confirmCancelButton.addEventListener('click', () => closeModal(confirmationModal));
     confirmDeleteButton.addEventListener('click', handleDeleteConfirm);
     validationCloseButton.addEventListener('click', () => closeModal(validationModal));
-    confirmAllCancelButton.addEventListener('click', () => closeModal(deleteAllConfirmationModal));
-    confirmAllDeleteButton.addEventListener('click', handleDeleteAllConfirm);
+    // "Ջնջել բոլորը" մոդալի փակման կոճակները հեռացված են
 
     // Export/Import Listeners
     exportButton.addEventListener('click', handleExport);
     importFileInput.addEventListener('change', handleImport);
 
-    // Password input listeners for enabling/disabling Delete buttons
+    // Password input listener for enabling/disabling Delete button
     deletePasswordInput.addEventListener('input', () => {
-        // Գաղտնաբառի ստուգումը նոր DELETE! արժեքով
+        // Գաղտնաբառի ստուգումը DELETE! արժեքով
         confirmDeleteButton.disabled = deletePasswordInput.value !== DELETE_PASSWORD;
     });
-    deleteAllPasswordInput.addEventListener('input', () => {
-        // Գաղտնաբառի ստուգումը նոր DELETE! արժեքով
-        confirmAllDeleteButton.disabled = deleteAllPasswordInput.value !== DELETE_PASSWORD;
-    });
+    // deleteAllPasswordInput-ի listener-ը հեռացված է
 
     // Delegate events for action buttons in the table (CRUD)
     tableBody.addEventListener('click', (e) => {

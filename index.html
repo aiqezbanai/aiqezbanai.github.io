@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Device List Manager</title>
+    <title>IP Address List Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -49,21 +49,6 @@
             cursor: not-allowed;
             transform: scale(1);
         }
-        /* Active Tab Style */
-        .tab-active {
-            border-color: #38b2ac; /* highlight color */
-            color: #e2e8f0; /* text-primary color */
-            background-color: #4a5568; /* accent color */
-        }
-        /* Utility class to hide file input */
-        .hidden-file-input {
-            width: 0.1px;
-            height: 0.1px;
-            opacity: 0;
-            overflow: hidden;
-            position: absolute;
-            z-index: -1;
-        }
     </style>
 </head>
 <body class="bg-primary text-text-primary font-sans">
@@ -72,61 +57,64 @@
         <header class="mb-6">
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-text-primary">
-                    Device List Manager
+                    IP Address List
                 </h1>
+                <div class="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-4">
+                    <div class="relative w-full sm:w-64">
+                        <input
+                          id="search-input"
+                          type="text"
+                          placeholder="Որոնում..."
+                          class="w-full bg-secondary border border-accent rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary placeholder-text-secondary"
+                        />
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="h-5 w-5 text-text-secondary"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                    </div>
+                    <button id="add-button" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-highlight hover:bg-teal-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+                        <span>Ավելացնել</span>
+                    </button>
+                    <button id="import-button" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l-3.75 3.75M12 9.75l3.75 3.75M3 17.25V6.75A2.25 2.25 0 015.25 4.5h13.5A2.25 2.25 0 0121 6.75v10.5A2.25 2.25 0 0118.75 19.5H5.25A2.25 2.25 0 013 17.25z"></path></svg>
+                        <span>IMPORT</span>
+                    </button>
+                    <input type="file" id="import-file-input" class="hidden" accept=".csv, text/csv">
+                    <button id="export-button" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"></path></svg>
+                        <span>EXPORT</span>
+                    </button>
+                    <button id="delete-all-button" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.124-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.077-2.09.921-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path></svg>
+                        <span>Ջնջել բոլորը</span>
+                    </button>
+                </div>
             </div>
         </header>
 
-        <nav class="mb-6 border-b border-accent">
-            <div class="flex flex-wrap gap-2 sm:gap-4 -mb-px">
-                <button data-tab="users" class="tab-button py-2 px-4 text-sm sm:text-base font-medium border-b-2 border-transparent text-text-secondary hover:text-text-primary hover:border-highlight transition-colors duration-200">Users</button>
-                <button data-tab="computers" class="tab-button py-2 px-4 text-sm sm:text-base font-medium border-b-2 border-transparent text-text-secondary hover:text-text-primary hover:border-highlight transition-colors duration-200">Computers</button>
-                <button data-tab="ipphones" class="tab-button py-2 px-4 text-sm sm:text-base font-medium border-b-2 border-transparent text-text-secondary hover:text-text-primary hover:border-highlight transition-colors duration-200">IP Phones</button>
-                <button data-tab="printers" class="tab-button py-2 px-4 text-sm sm:text-base font-medium border-b-2 border-transparent text-text-secondary hover:text-text-primary hover:border-highlight transition-colors duration-200">Printers</button>
-                <button data-tab="switches" class="tab-button py-2 px-4 text-sm sm:text-base font-medium border-b-2 border-transparent text-text-secondary hover:text-text-primary hover:border-highlight transition-colors duration-200">Switches</button>
-                <button data-tab="others" class="tab-button py-2 px-4 text-sm sm:text-base font-medium border-b-2 border-transparent text-text-secondary hover:text-text-primary hover:border-highlight transition-colors duration-200">Others</button>
-            </div>
-        </nav>
-
-        <div class="w-full flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-            <div class="relative w-full md:w-64 order-2 md:order-1">
-                <input
-                  id="search-input"
-                  type="text"
-                  placeholder="Որոնում..."
-                  class="w-full bg-secondary border border-accent rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary placeholder-text-secondary"
-                />
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="h-5 w-5 text-text-secondary"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </div>
-            </div>
-            <div class="w-full md:w-auto flex flex-wrap justify-end gap-4 order-1 md:order-2">
-                <input type="file" id="import-file-input" accept=".csv" class="hidden-file-input">
-                <label for="import-file-input" id="import-button" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /></svg>
-                    <span>Import CSV</span>
-                </label>
-                <button id="export-button" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
-                    <span>Export CSV</span>
-                </button>
-                <button id="add-button" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-highlight hover:bg-teal-500 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
-                    <span>Ավելացնել</span>
-                </button>
-            </div>
-        </div>
-
         <main>
             <div id="no-records-message" class="hidden text-center py-16 bg-secondary rounded-lg">
-                <h2 class="text-xl text-text-secondary">Սարքեր չեն գտնվել</h2>
-                <p class="mt-2 text-text-secondary">Սեղմեք "Ավելացնել"՝ «Նոր Սարք» ավելացնելու համար:</p>
+                <h2 class="text-xl text-text-secondary">Գրառումներ չկան</h2>
+                <p class="mt-2 text-text-secondary">Սեղմեք "Ավելացնել"՝ նոր IP հասցե ավելացնելու համար:</p>
             </div>
             <div id="table-container" class="bg-secondary shadow-lg rounded-lg overflow-hidden">
                 <div class="overflow-x-auto custom-scrollbar">
                     <table class="min-w-full leading-normal">
-                        <thead id="device-table-header"></thead>
-                        <tbody id="device-table-body">
+                        <thead>
+                            <tr class="border-b-2 border-accent bg-accent text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
+                                <th class="px-5 py-3">No.</th>
+                                <th class="px-5 py-3">Department</th>
+                                <th class="px-5 py-3">Vlan</th>
+                                <th class="px-5 py-3">Subnet Mask</th>
+                                <th class="px-5 py-3">Default Gateway</th>
+                                <th class="px-5 py-3">Usable IP addresses</th>
+                                <th class="px-5 py-3">Network Address</th>
+                                <th class="px-5 py-3">Broadcast Address</th>
+                                <th class="px-5 py-3">Նշումներ</th>
+                                <th class="px-5 py-3 text-center">Գործողություն</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ip-table-body">
                             </tbody>
                     </table>
                 </div>
@@ -149,10 +137,40 @@
         <div class="bg-secondary rounded-lg shadow-xl w-full max-w-lg max-h-full overflow-y-auto custom-scrollbar">
             <div class="p-6">
                 <h2 id="form-modal-title" class="text-2xl font-bold mb-6 text-text-primary"></h2>
-                <form id="device-form" class="space-y-4">
+                <form id="ip-form" class="space-y-4">
                     <input type="hidden" id="record-id" name="id">
-                    <div id="form-fields-container">
-                        </div>
+                    <div>
+                        <label for="department" class="block text-sm font-medium text-text-secondary mb-1">Department</label>
+                        <input type="text" id="department" name="department" class="w-full bg-primary border border-accent rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary">
+                    </div>
+                    <div>
+                        <label for="vlan" class="block text-sm font-medium text-text-secondary mb-1">Vlan</label>
+                        <input type="text" id="vlan" name="vlan" class="w-full bg-primary border border-accent rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary">
+                    </div>
+                    <div>
+                        <label for="subnetMask" class="block text-sm font-medium text-text-secondary mb-1">SubNet MASK</label>
+                        <input type="text" id="subnetMask" name="subnetMask" class="w-full bg-primary border border-accent rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary">
+                    </div>
+                    <div>
+                        <label for="defaultGateway" class="block text-sm font-medium text-text-secondary mb-1">Default Gateway</label>
+                        <input type="text" id="defaultGateway" name="defaultGateway" class="w-full bg-primary border border-accent rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary">
+                    </div>
+                    <div>
+                        <label for="usableIPs" class="block text-sm font-medium text-text-secondary mb-1">Usable IP addresses</label>
+                        <input type="text" id="usableIPs" name="usableIPs" class="w-full bg-primary border border-accent rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary">
+                    </div>
+                    <div>
+                        <label for="networkAddress" class="block text-sm font-medium text-text-secondary mb-1">Network Address</label>
+                        <input type="text" id="networkAddress" name="networkAddress" class="w-full bg-primary border border-accent rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary">
+                    </div>
+                    <div>
+                        <label for="broadcastAddress" class="block text-sm font-medium text-text-secondary mb-1">Broadcast Address</label>
+                        <input type="text" id="broadcastAddress" name="broadcastAddress" class="w-full bg-primary border border-accent rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary">
+                    </div>
+                    <div>
+                        <label for="notes" class="block text-sm font-medium text-text-secondary mb-1">Նշումներ</label>
+                        <textarea id="notes" name="notes" rows="3" class="w-full bg-primary border border-accent rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary"></textarea>
+                    </div>
                     <div class="flex justify-end gap-4 pt-6">
                         <button type="button" id="form-cancel-button" class="py-2 px-4 bg-accent hover:bg-gray-600 text-text-primary font-semibold rounded-lg transition-colors duration-300">Չեղարկել</button>
                         <button type="submit" id="form-submit-button" class="py-2 px-4 bg-highlight hover:bg-teal-500 text-white font-semibold rounded-lg transition-colors duration-300"></button>
@@ -165,12 +183,24 @@
     <div id="confirmation-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center p-4">
         <div class="bg-secondary rounded-lg shadow-xl w-full max-w-sm">
             <div class="p-6">
-                <h2 class="text-xl font-bold mb-4 text-text-primary">Ջնջումը հաստատել</h2>
-                <p class="text-text-secondary mb-4">Վստա՞հ եք, որ ցանկանում եք ջնջել: Մուտքագրեք ջնջման գաղտնաբառը (<span class="font-bold text-red-400">DELETE!</span>)՝ հաստատելու համար։</p>
-                <input type="password" id="delete-password-input" class="w-full bg-primary border border-accent rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary mb-6" placeholder="Գաղտնաբառ">
+                <h2 class="text-xl font-bold mb-4 text-text-primary">Հաստատում</h2>
+                <p class="text-text-secondary mb-6">Վստա՞հ եք, որ ցանկանում եք ջնջել:</p>
                 <div class="flex justify-end gap-4">
-                    <button type="button" id="confirm-cancel-button" class="py-2 px-4 bg-accent hover:bg-gray-600 text-text-primary font-semibold rounded-lg transition-colors duration-300">Չեղարկել</button>
-                    <button type="button" id="confirm-delete-button" class="py-2 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-300" disabled>Ջնջել</button>
+                    <button id="confirm-cancel-button" class="py-2 px-4 bg-accent hover:bg-gray-600 text-text-primary font-semibold rounded-lg transition-colors duration-300">Չեղարկել</button>
+                    <button id="confirm-delete-button" class="py-2 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-300">Ջնջել</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="delete-all-confirmation-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center p-4">
+        <div class="bg-secondary rounded-lg shadow-xl w-full max-w-sm">
+            <div class="p-6">
+                <h2 class="text-xl font-bold mb-4 text-text-primary">Հաստատում</h2>
+                <p class="text-text-secondary mb-6">Վստա՞հ եք, որ ցանկանում եք ջնջել բոլոր գրառումները: Այս գործողությունը անդառնալի է։</p>
+                <div class="flex justify-end gap-4">
+                    <button id="confirm-all-cancel-button" class="py-2 px-4 bg-accent hover:bg-gray-600 text-text-primary font-semibold rounded-lg transition-colors duration-300">Չեղարկել</button>
+                    <button id="confirm-all-delete-button" class="py-2 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-300">Այո, ջնջել</button>
                 </div>
             </div>
         </div>
@@ -179,10 +209,22 @@
     <div id="validation-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center p-4">
         <div class="bg-secondary rounded-lg shadow-xl w-full max-w-sm">
             <div class="p-6 text-center">
-                <h2 id="validation-modal-title" class="text-xl font-bold mb-4 text-text-primary"></h2>
-                <p id="validation-message" class="text-text-secondary mb-6"></p>
+                <h2 class="text-xl font-bold mb-4 text-text-primary">Ուշադրություն</h2>
+                <p class="text-text-secondary mb-6">Խնդրում ենք լրացնել բոլոր դատարկ դաշտերը:</p>
                 <div class="flex justify-center gap-4">
-                    <button type="button" id="validation-close-button" class="py-2 px-6 bg-highlight hover:bg-teal-500 text-white font-semibold rounded-lg transition-colors duration-300">Փակել</button>
+                    <button id="validation-close-button" class="py-2 px-6 bg-highlight hover:bg-teal-500 text-white font-semibold rounded-lg transition-colors duration-300">Փակել</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="import-success-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center p-4">
+        <div class="bg-secondary rounded-lg shadow-xl w-full max-w-sm">
+            <div class="p-6 text-center">
+                <h2 class="text-xl font-bold mb-4 text-text-primary">Ներմուծումը հաջողվեց</h2>
+                <p id="import-success-message" class="text-text-secondary mb-6"></p>
+                <div class="flex justify-center gap-4">
+                    <button id="import-success-close-button" class="py-2 px-6 bg-highlight hover:bg-teal-500 text-white font-semibold rounded-lg transition-colors duration-300">Փակել</button>
                 </div>
             </div>
         </div>
@@ -194,98 +236,16 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Configuration for each device type (Վերականգնված)
-    const DEVICE_CONFIG = {
-        users: {
-            title: 'Օգտատերեր',
-            storageKey: 'deviceRecords_users',
-            fields: [
-                { id: 'employeeID', label: 'Employee ID', required: true },
-                { id: 'fullName', label: 'Full Name', required: true },
-                { id: 'department', label: 'Department', required: false },
-                { id: 'email', label: 'Email', required: false },
-                { id: 'phone', label: 'Phone Number', required: false },
-                { id: 'notes', label: 'Նշումներ', type: 'textarea', required: false },
-            ]
-        },
-        computers: {
-            title: 'Համակարգիչներ',
-            storageKey: 'deviceRecords_computers',
-            fields: [
-                { id: 'deviceName', label: 'Device Name', required: true },
-                { id: 'ipAddress', label: 'IP Address', required: true },
-                { id: 'user', label: 'User/Employee', required: false },
-                { id: 'department', label: 'Department', required: false },
-                { id: 'serialNumber', label: 'Serial Number', required: false },
-                { id: 'notes', label: 'Նշումներ', type: 'textarea', required: false },
-            ]
-        },
-        ipphones: {
-            title: 'IP Հեռախոսներ',
-            storageKey: 'deviceRecords_ipphones',
-            fields: [
-                { id: 'extension', label: 'Extension', required: true },
-                { id: 'ipAddress', label: 'IP Address', required: true },
-                { id: 'user', label: 'User/Employee', required: false },
-                { id: 'location', label: 'Location', required: false },
-                { id: 'model', label: 'Model', required: false },
-                { id: 'notes', label: 'Նշումներ', type: 'textarea', required: false },
-            ]
-        },
-        printers: {
-            title: 'Տպիչներ',
-            storageKey: 'deviceRecords_printers',
-            fields: [
-                { id: 'printerName', label: 'Printer Name', required: true },
-                { id: 'ipAddress', label: 'IP Address', required: true },
-                { id: 'location', label: 'Location', required: false },
-                { id: 'model', label: 'Model', required: false },
-                { id: 'serialNumber', label: 'Serial Number', required: false },
-                { id: 'notes', label: 'Նշումներ', type: 'textarea', required: false },
-            ]
-        },
-        switches: {
-            title: 'Սվիչներ',
-            storageKey: 'deviceRecords_switches',
-            fields: [
-                { id: 'deviceName', label: 'Device Name', required: true },
-                { id: 'ipAddress', label: 'IP Address', required: true },
-                { id: 'location', label: 'Location/Rack', required: false },
-                { id: 'model', label: 'Model', required: false },
-                { id: 'ports', label: 'Total Ports', required: false },
-                { id: 'notes', label: 'Նշումներ', type: 'textarea', required: false },
-            ]
-        },
-        others: {
-            title: 'Այլ Սարքեր',
-            storageKey: 'deviceRecords_others',
-            // Others tab will use the IP Address fields as a versatile default
-            fields: [
-                { id: 'deviceName', label: 'Device Name', required: true },
-                { id: 'ipAddress', label: 'IP Address', required: true },
-                { id: 'department', label: 'Department/User', required: false },
-                { id: 'location', label: 'Location', required: false },
-                { id: 'model', label: 'Model', required: false },
-                { id: 'notes', label: 'Նշումներ', type: 'textarea', required: false },
-            ]
-        }
-    };
-
-    const DELETE_PASSWORD = 'DELETE!'; 
-
     // State
-    let allRecords = {}; // Stores all records for all tabs
-    let currentTab = 'users'; // Փոխված է 'users'
+    let ipRecords = [];
     let editingRecordId = null;
-    let deletingRecordId = null; 
+    let deletingRecordId = null;
     let copyToastTimeout = null;
     let currentPage = 1;
     const recordsPerPage = 10;
 
     // DOM Elements
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tableHeader = document.getElementById('device-table-header');
-    const tableBody = document.getElementById('device-table-body'); // Changed from ip-table-body
+    const tableBody = document.getElementById('ip-table-body');
     const noRecordsMessage = document.getElementById('no-records-message');
     const tableContainer = document.getElementById('table-container');
     const searchInput = document.getElementById('search-input');
@@ -299,63 +259,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Modals
     const formModal = document.getElementById('form-modal');
-    const confirmationModal = document.getElementById('confirmation-modal'); 
+    const confirmationModal = document.getElementById('confirmation-modal');
     const validationModal = document.getElementById('validation-modal');
-    
-    // Delete Confirmation Elements
-    const deletePasswordInput = document.getElementById('delete-password-input');
-    const confirmDeleteButton = document.getElementById('confirm-delete-button');
+    const deleteAllConfirmationModal = document.getElementById('delete-all-confirmation-modal');
+    const importSuccessModal = document.getElementById('import-success-modal');
+    const importSuccessMessage = document.getElementById('import-success-message');
 
     // Form Elements
-    const deviceForm = document.getElementById('device-form'); // Changed from ip-form
+    const ipForm = document.getElementById('ip-form');
     const formModalTitle = document.getElementById('form-modal-title');
     const formSubmitButton = document.getElementById('form-submit-button');
-    const formFieldsContainer = document.getElementById('form-fields-container');
+    const importFileInput = document.getElementById('import-file-input');
 
     // Buttons
     const addButton = document.getElementById('add-button');
+    const deleteAllButton = document.getElementById('delete-all-button');
+    const importButton = document.getElementById('import-button');
+    const exportButton = document.getElementById('export-button');
     const formCancelButton = document.getElementById('form-cancel-button');
     const confirmCancelButton = document.getElementById('confirm-cancel-button');
+    const confirmDeleteButton = document.getElementById('confirm-delete-button');
     const validationCloseButton = document.getElementById('validation-close-button');
-    
-    // Export/Import Elements
-    const exportButton = document.getElementById('export-button');
-    const importFileInput = document.getElementById('import-file-input');
-    const validationModalTitle = document.getElementById('validation-modal-title');
+    const confirmAllCancelButton = document.getElementById('confirm-all-cancel-button');
+    const confirmAllDeleteButton = document.getElementById('confirm-all-delete-button');
+    const importSuccessCloseButton = document.getElementById('import-success-close-button');
 
 
     // --- Data Persistence ---
     const loadRecords = () => {
-        for (const key in DEVICE_CONFIG) {
-            try {
-                const savedRecords = localStorage.getItem(DEVICE_CONFIG[key].storageKey);
-                let records = savedRecords ? JSON.parse(savedRecords) : [];
-                
-                let madeChanges = false;
-                records.forEach(record => {
-                    if (!record.id) {
-                        record.id = crypto.randomUUID(); 
-                        madeChanges = true;
-                    }
-                });
-                
-                allRecords[key] = records;
-                
-                if (madeChanges) {
-                    saveRecords(key);
+        try {
+            const savedRecords = localStorage.getItem('ipRecords');
+            let records = savedRecords ? JSON.parse(savedRecords) : [];
+            
+            let madeChanges = false;
+            records.forEach(record => {
+                if (!record.id) {
+                    record.id = crypto.randomUUID(); 
+                    madeChanges = true;
                 }
-            } catch (error) {
-                console.error(`Failed to parse ${key} records from localStorage`, error);
-                allRecords[key] = [];
+            });
+
+            ipRecords = records;
+
+            if (madeChanges) {
+                saveRecords();
             }
+        } catch (error) {
+            console.error("Failed to parse IP records from localStorage", error);
+            ipRecords = [];
         }
     };
 
-    const saveRecords = (deviceType) => {
+    const saveRecords = () => {
         try {
-            localStorage.setItem(DEVICE_CONFIG[deviceType].storageKey, JSON.stringify(allRecords[deviceType]));
+            localStorage.setItem('ipRecords', JSON.stringify(ipRecords));
         } catch (error) {
-            console.error(`Failed to save ${deviceType} records to localStorage`, error);
+            console.error("Failed to save IP records to localStorage", error);
         }
     };
     
@@ -376,39 +335,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- Rendering ---
-    const getFilteredRecords = () => {
-        const currentRecords = allRecords[currentTab] || [];
-        const searchTerm = searchInput.value.toLowerCase();
-        
-        return currentRecords.filter(record =>
-            Object.values(record).some(value => 
-                value && String(value).toLowerCase().includes(searchTerm)
-            )
-        );
-    };
-
-    const renderHeader = () => {
-        const config = DEVICE_CONFIG[currentTab];
-        const headers = config.fields.map(field => field.label);
-        
-        const headerRow = document.createElement('tr');
-        headerRow.className = 'border-b-2 border-accent bg-accent text-left text-xs font-semibold text-text-secondary uppercase tracking-wider';
-        
-        let html = '<th class="px-5 py-3">No.</th>';
-        headers.forEach(header => {
-            html += `<th class="px-5 py-3">${header}</th>`;
-        });
-        html += '<th class="px-5 py-3 text-center">Գործողություն</th>';
-        
-        tableHeader.innerHTML = html;
-    };
-
     const renderTable = () => {
-        const filteredRecords = getFilteredRecords();
+        const hasRecords = ipRecords.length > 0;
+        deleteAllButton.disabled = !hasRecords;
+        exportButton.disabled = !hasRecords;
+
+        const searchTerm = searchInput.value.toLowerCase();
+        const filteredRecords = ipRecords.filter(record =>
+            [
+                record.department,
+                record.vlan,
+                record.subnetMask,
+                record.defaultGateway,
+                record.usableIPs,
+                record.networkAddress,
+                record.broadcastAddress,
+                record.notes
+            ].some(value => value && String(value).toLowerCase().includes(searchTerm))
+        );
+
         const totalRecords = filteredRecords.length;
         const totalPages = Math.ceil(totalRecords / recordsPerPage);
         
-        // Adjust current page if it's out of bounds
+        // Adjust current page if it's out of bounds after filtering/deletion
         if (currentPage > totalPages) {
             currentPage = totalPages || 1;
         }
@@ -417,24 +366,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const endIndex = startIndex + recordsPerPage;
         const paginatedRecords = filteredRecords.slice(startIndex, endIndex);
 
-        // Enable/Disable Export button
-        exportButton.disabled = totalRecords === 0;
-
-        renderHeader();
         tableBody.innerHTML = '';
 
         if (totalRecords === 0) {
-            // Թաքցնել աղյուսակը և ցուցադրել հաղորդագրությունը
             noRecordsMessage.classList.remove('hidden');
             tableContainer.classList.add('hidden');
         } else {
-            // Ցուցադրել աղյուսակը և թաքցնել հաղորդագրությունը
             noRecordsMessage.classList.add('hidden');
             tableContainer.classList.remove('hidden');
-            
-            const config = DEVICE_CONFIG[currentTab];
-            const fieldKeys = config.fields.map(f => f.id);
-
             paginatedRecords.forEach((record, index) => {
                 const globalIndex = startIndex + index;
                 const row = document.createElement('tr');
@@ -443,8 +382,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const createCopyableCell = (text) => {
                     const cell = document.createElement('td');
-                    cell.className = 'px-5 py-4 text-sm max-w-xs';
-                    
+                    cell.className = 'px-5 py-4 text-sm';
+
                     const container = document.createElement('div');
                     container.className = 'flex items-center gap-2 group relative';
                     
@@ -454,12 +393,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     textSpan.textContent = text || "-";
                     
                     const copyButton = document.createElement('button');
-                    copyButton.type = 'button'; // Add type button to prevent form submission if mistakenly inside form
+                    // ՇՏԿՈՒՄ 2-Բ: Ավելացվել է type="button" ատրիբուտը
+                    copyButton.type = 'button'; 
                     copyButton.className = 'opacity-0 group-hover:opacity-100 text-text-secondary hover:text-highlight transition-all duration-200 focus:outline-none';
                     copyButton.title = 'Պատճենել';
                     copyButton.disabled = !text;
                     copyButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="h-4 w-4"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>`;
                     
+                    // ՇՏԿՈՒՄ 2-Գ: Ավելացվել է e.stopPropagation()՝ կանխելու համար CRUD կոճակների ակտիվացումը
                     copyButton.onclick = (e) => {
                         e.stopPropagation(); 
                         navigator.clipboard.writeText(text).then(() => {
@@ -477,31 +418,38 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
 
                     container.appendChild(textSpan);
-                    if (text) {
-                        container.appendChild(copyButton);
-                    }
+                    container.appendChild(copyButton);
                     cell.appendChild(container);
                     return cell;
                 };
                 
                 row.innerHTML = `<td class="px-5 py-4 text-sm">${globalIndex + 1}</td>`;
+                row.appendChild(createCopyableCell(record.department));
+                row.appendChild(createCopyableCell(record.vlan));
+                row.appendChild(createCopyableCell(record.subnetMask));
+                row.appendChild(createCopyableCell(record.defaultGateway));
+                row.appendChild(createCopyableCell(record.usableIPs));
+                row.appendChild(createCopyableCell(record.networkAddress));
+                row.appendChild(createCopyableCell(record.broadcastAddress));
                 
-                fieldKeys.forEach(key => {
-                    row.appendChild(createCopyableCell(record[key]));
-                });
+                const notesCell = document.createElement('td');
+                notesCell.className = 'px-5 py-4 text-sm max-w-xs truncate';
+                notesCell.title = record.notes;
+                notesCell.textContent = record.notes;
+                row.appendChild(notesCell);
 
                 const actionsCell = document.createElement('td');
                 actionsCell.className = 'px-5 py-4 text-sm text-center';
-                // Շտկված: CRUD կոճակներին ավելացվել է type="button"
+                // ՇՏԿՈՒՄ 2-Ա: Ավելացվել է type="button" ատրիբուտը CRUD կոճակներին
                 actionsCell.innerHTML = `
                     <div class="flex items-center justify-center gap-4">
-                        <button type="button" data-action="duplicate" class="text-green-400 hover:text-green-300 transition-colors duration-200 focus:outline-none" title="Կրկնօրինակել">
+                        <button type="button" data-action="duplicate" class="text-green-400 hover:text-green-300 transition-colors duration-200" title="Կրկնօրինակել">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"></path></svg>
                         </button>
-                        <button type="button" data-action="edit" class="text-blue-400 hover:text-blue-300 transition-colors duration-200 focus:outline-none" title="Խմբագրել">
+                        <button type="button" data-action="edit" class="text-blue-400 hover:text-blue-300 transition-colors duration-200" title="Խմբագրել">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path></svg>
                         </button>
-                        <button type="button" data-action="delete" class="text-red-400 hover:text-red-300 transition-colors duration-200 focus:outline-none" title="Ջնջել">
+                        <button type="button" data-action="delete" class="text-red-400 hover:text-red-300 transition-colors duration-200" title="Ջնջել">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     </div>`;
@@ -511,368 +459,247 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         renderPagination(totalRecords);
     };
-    
-    // --- Form Rendering ---
-    const renderFormFields = (config) => {
-        formFieldsContainer.innerHTML = '';
-        config.fields.forEach(field => {
-            const labelText = field.label + (field.required ? ' *' : '');
-            let inputElement;
 
-            if (field.type === 'textarea') {
-                inputElement = `<textarea id="${field.id}" name="${field.id}" rows="3" class="w-full bg-primary border border-accent rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary"></textarea>`;
-            } else {
-                inputElement = `<input type="text" id="${field.id}" name="${field.id}" class="w-full bg-primary border border-accent rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary">`;
-            }
-
-            const fieldDiv = document.createElement('div');
-            fieldDiv.innerHTML = `
-                <label for="${field.id}" class="block text-sm font-medium text-text-secondary mb-1">${labelText}</label>
-                ${inputElement}
-            `;
-            formFieldsContainer.appendChild(fieldDiv);
-        });
-    };
-
-    // --- Tab Control ---
-    const switchTab = (newTab) => {
-        if (currentTab === newTab) return;
-        currentTab = newTab;
-        currentPage = 1;
-        
-        tabButtons.forEach(btn => {
-            btn.classList.remove('tab-active');
-            if (btn.dataset.tab === newTab) {
-                btn.classList.add('tab-active');
-            }
-        });
-        
-        // Փոփոխել No Records հաղորդագրությունը ըստ ներդիրի
-        const config = DEVICE_CONFIG[currentTab];
-        document.querySelector('#no-records-message h2').textContent = `${config.title} չեն գտնվել`;
-        document.querySelector('#no-records-message p').textContent = `Սեղմեք "Ավելացնել"՝ նոր ${config.title} ավելացնելու համար:`;
-
-
-        renderTable();
-    };
-
+    // ... (մնացած JavaScript կոդը մնում է անփոփոխ, քանի որ CRUD-ի տրամաբանությունը ճիշտ է) ...
     // --- Modal Control ---
-    const openModal = (modal, title = 'Ուշադրություն') => {
-        if (modal === validationModal) {
-            validationModalTitle.textContent = title;
-        }
-        modal.classList.remove('hidden');
-    };
+    const openModal = (modal) => modal.classList.remove('hidden');
     const closeModal = (modal) => modal.classList.add('hidden');
-    // Շտկված: showValidation ֆունկցիան ստանում է ճիշտ տիտղոսը
-    const showValidation = (message, title = 'Ուշադրություն') => {
-        document.getElementById('validation-message').innerHTML = message; // Use innerHTML to support bold text from export function
-        openModal(validationModal, title);
-    };
 
-    // --- Event Handlers (CRUD) ---
+    // --- Event Handlers ---
     const handleAddClick = () => {
         editingRecordId = null;
-        deviceForm.reset();
-        const config = DEVICE_CONFIG[currentTab];
-        renderFormFields(config);
-        formModalTitle.textContent = `Ավելացնել նոր ${config.title} գրառում`;
+        ipForm.reset();
+        formModalTitle.textContent = 'Ավելացնել նոր IP գրառում';
         formSubmitButton.textContent = 'Կատարել';
         openModal(formModal);
     };
 
-    const loadFormWithRecord = (record, isDuplicate) => {
-        const config = DEVICE_CONFIG[currentTab];
-        renderFormFields(config);
-        
-        // Reset the form and ID input first
-        deviceForm.reset();
-        document.getElementById('record-id').value = '';
-
-        for (const key in record) {
-            const formElement = deviceForm.elements[key];
-            if (formElement) {
-                formElement.value = record[key] || '';
-            }
-        }
-
-        if (!isDuplicate) {
-            // For editing, set the actual ID
-            document.getElementById('record-id').value = record.id;
-            editingRecordId = record.id;
-            formModalTitle.textContent = `Խմբագրել ${config.title} գրառումը`;
-            formSubmitButton.textContent = 'Թարմացնել';
-        } else {
-            // For duplicating, keep editingRecordId as null (new record)
-            editingRecordId = null;
-            formModalTitle.textContent = `Կրկնօրինակել ${config.title} գրառումը`;
-            formSubmitButton.textContent = 'Կրկնօրինակել';
-        }
-
-        openModal(formModal);
-    };
-
     const handleEditClick = (id) => {
-        const currentRecords = allRecords[currentTab];
-        const record = currentRecords.find(r => r.id === id);
+        const record = ipRecords.find(r => r.id === id);
         if (record) {
-            loadFormWithRecord(record, false);
+            editingRecordId = id;
+            for (const key in record) {
+                if (ipForm.elements[key]) {
+                    ipForm.elements[key].value = record[key];
+                }
+            }
+            formModalTitle.textContent = 'Խմբագրել IP գրառումը';
+            formSubmitButton.textContent = 'Թարմացնել';
+            openModal(formModal);
         }
     };
     
     const handleDuplicateClick = (id) => {
-        const currentRecords = allRecords[currentTab];
-        const record = currentRecords.find(r => r.id === id);
+        const record = ipRecords.find(r => r.id === id);
         if (record) {
-            // Create a copy of the record without the ID for duplication
+            editingRecordId = null; // Important: we're creating a new record
             const { id: recordId, ...recordData } = record;
-            loadFormWithRecord(recordData, true);
+            for (const key in recordData) {
+                if (ipForm.elements[key]) {
+                    ipForm.elements[key].value = recordData[key];
+                }
+            }
+            formModalTitle.textContent = 'Կրկնօրինակել IP գրառումը';
+            formSubmitButton.textContent = 'Կրկնօրինակել';
+            openModal(formModal);
         }
     };
 
     const handleDeleteRequest = (id) => {
         deletingRecordId = id;
-        deletePasswordInput.value = ''; // Clear previous input
-        confirmDeleteButton.disabled = true;
         openModal(confirmationModal);
     };
 
     const handleDeleteConfirm = () => {
-        if (deletePasswordInput.value === DELETE_PASSWORD) {
-            allRecords[currentTab] = allRecords[currentTab].filter(record => record.id !== deletingRecordId);
-            deletingRecordId = null;
-            saveRecords(currentTab);
-            renderTable();
-            closeModal(confirmationModal);
-        } else {
-            showValidation('Սխալ գաղտնաբառ։ Խնդրում ենք փորձել նորից։', 'Ջնջման սխալ');
-            deletePasswordInput.value = '';
-            confirmDeleteButton.disabled = true;
+        ipRecords = ipRecords.filter(record => record.id !== deletingRecordId);
+        deletingRecordId = null;
+        saveRecords();
+        renderTable();
+        closeModal(confirmationModal);
+    };
+
+    const handleDeleteAllRequest = () => {
+        if (ipRecords.length > 0) {
+            openModal(deleteAllConfirmationModal);
         }
+    };
+
+    const handleDeleteAllConfirm = () => {
+        ipRecords = [];
+        currentPage = 1;
+        saveRecords();
+        renderTable();
+        closeModal(deleteAllConfirmationModal);
     };
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
-        const formData = new FormData(deviceForm);
+        const formData = new FormData(ipForm);
         const recordData = Object.fromEntries(formData.entries());
-        
-        const config = DEVICE_CONFIG[currentTab];
-        const requiredFields = config.fields.filter(f => f.required).map(f => f.id);
-        
-        // Check for empty required fields
+
+        const requiredFields = ['department', 'vlan', 'subnetMask', 'defaultGateway', 'usableIPs', 'networkAddress', 'broadcastAddress'];
         const hasEmptyField = requiredFields.some(field => !recordData[field] || !recordData[field].trim());
 
         if (hasEmptyField) {
-            showValidation('Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը (*):');
+            openModal(validationModal);
             return;
         }
 
         if (editingRecordId) {
-            const index = allRecords[currentTab].findIndex(r => r.id === editingRecordId);
+            const index = ipRecords.findIndex(r => r.id === editingRecordId);
             if (index > -1) {
-                // Keep the old ID, update other fields
-                allRecords[currentTab][index] = { ...allRecords[currentTab][index], ...recordData, id: allRecords[currentTab][index].id };
+                ipRecords[index] = { ...ipRecords[index], ...recordData };
             }
         } else {
-            // New record (Add or Duplicate)
             const newRecord = { id: crypto.randomUUID(), ...recordData };
-            allRecords[currentTab].unshift(newRecord); // Add to the beginning
+            ipRecords.unshift(newRecord); // Add to the beginning
             currentPage = 1; // Go to first page to see the new record
         }
         
         editingRecordId = null;
-        saveRecords(currentTab);
+        saveRecords();
         renderTable();
         closeModal(formModal);
     };
 
-    // --- Export/Import Logic ---
-
-    const escapeCsv = (str) => {
-        if (!str) return '';
-        str = String(str).replace(/"/g, '""');
-        if (str.includes(',') || str.includes('\n') || str.includes('"')) {
-            return `"${str}"`;
+    const escapeCSV = (str) => {
+        if (str === null || str === undefined) {
+            return '';
         }
-        return str;
+        let result = String(str);
+        if (result.includes(',') || result.includes('"') || result.includes('\n')) {
+            result = result.replace(/"/g, '""'); // Escape double quotes
+            result = `"${result}"`; // Enclose in double quotes
+        }
+        return result;
     };
 
-    const handleExport = () => {
-        const config = DEVICE_CONFIG[currentTab];
-        const records = allRecords[currentTab];
-
-        if (records.length === 0) {
-            showValidation('Արտահանելու համար գրառումներ չկան:', 'Տեղեկատվություն');
+    const handleExportClick = () => {
+        if (ipRecords.length === 0) {
+            alert('No records to export.');
             return;
         }
+        const headers = ['No.', 'Department', 'Vlan', 'Subnet Mask', 'Default Gateway', 'Usable IP addresses', 'Network Address', 'Broadcast Address', 'Նշումներ'];
+        const rows = ipRecords.map((record, index) => [
+            index + 1, record.department, record.vlan, record.subnetMask, record.defaultGateway,
+            record.usableIPs, record.networkAddress, record.broadcastAddress, record.notes
+        ].map(escapeCSV));
 
-        const headers = config.fields.map(f => f.label); // Export using Armenian/English labels
-        const fieldKeys = config.fields.map(f => f.id);
-        
-        let csv = headers.map(escapeCsv).join(',') + '\n'; // Header row
-        
-        records.forEach(record => {
-            const row = fieldKeys.map(key => {
-                return escapeCsv(record[key] || '');
-            }).join(',');
-            csv += row + '\n';
-        });
-
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
+        const csvContent = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
-        
-        link.setAttribute("href", url);
-        link.setAttribute("download", `${currentTab}_list_${new Date().toISOString().slice(0, 10)}.csv`);
+        const date = new Date().toISOString().slice(0, 10);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `ip_records_${date}.csv`);
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
-        // Շտկված Export Success Մոդալի Տեքստ
-        showValidation(`«${config.title}» բաժնի տվյալները հաջողությամբ արտահանվեցին:`, 'Հաջողակ արտահանում');
+        URL.revokeObjectURL(url);
     };
 
-    const handleImport = (e) => {
-        const file = e.target.files[0];
+    const handleImportClick = () => {
+        importFileInput.click();
+    };
+
+    const handleFileSelect = (event) => {
+        const file = event.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = (event) => {
-            const text = event.target.result;
-            processImportCsv(text);
+        reader.onload = (e) => {
+            let csvText = e.target.result;
+            try {
+                if (csvText.startsWith('\uFEFF')) { // Handle BOM
+                    csvText = csvText.substring(1);
+                }
+                const lines = csvText.trim().split(/\r?\n/);
+                if (lines.length < 2) {
+                    alert('File is empty or contains only a header.');
+                    return;
+                }
+                
+                const headerLine = lines.shift().trim();
+                const fileHeaders = [];
+                const headerRegex = /(?:"([^"]*(?:""[^"]*)*)"|([^,]*))(?:,|$)/g;
+                let headerMatch;
+                while (headerMatch = headerRegex.exec(headerLine)) {
+                    fileHeaders.push(headerMatch[1] ? headerMatch[1].replace(/""/g, '"') : headerMatch[2]);
+                    if (!headerMatch[0].endsWith(',')) break;
+                }
+
+                const keyMap = {
+                    'Department': 'department', 'Vlan': 'vlan', 'Subnet Mask': 'subnetMask',
+                    'Default Gateway': 'defaultGateway', 'Usable IP addresses': 'usableIPs',
+                    'Network Address': 'networkAddress', 'Broadcast Address': 'broadcastAddress', 'Նշումներ': 'notes'
+                };
+                
+                const headerMapping = fileHeaders.map(h => keyMap[h.trim()]);
+
+                const newRecords = lines.map(line => {
+                    if (!line.trim()) return null;
+                    
+                    const values = [];
+                    const valueRegex = /(?:"([^"]*(?:""[^"]*)*)"|([^,]*))(?:,|$)/g;
+                    let valueMatch;
+                    while (valueMatch = valueRegex.exec(line)) {
+                         values.push(valueMatch[1] ? valueMatch[1].replace(/""/g, '"') : valueMatch[2]);
+                         if (!valueMatch[0].endsWith(',')) break;
+                    }
+                    
+                    const record = {};
+                    let hasData = false;
+                    headerMapping.forEach((key, index) => {
+                        if (key && values[index] !== undefined && values[index].trim() !== '') {
+                            record[key] = values[index];
+                            hasData = true;
+                        }
+                    });
+                    
+                    if (hasData) {
+                        record.id = crypto.randomUUID();
+                        return record;
+                    }
+                    return null;
+                }).filter(Boolean);
+
+                if (newRecords.length > 0) {
+                    ipRecords.push(...newRecords);
+                    saveRecords();
+                    renderTable();
+                    importSuccessMessage.textContent = `Հաջողությամբ ներմուծվել է ${newRecords.length} գրառում։`;
+                    openModal(importSuccessModal);
+                } else {
+                    alert('No valid records found in the file to import. Please check column headers.');
+                }
+            } catch (error) {
+                console.error("Failed to parse CSV file:", error);
+                alert("Error parsing CSV file. Please check the file format and try again.");
+            } finally {
+                event.target.value = null; // Reset file input
+            }
         };
         reader.onerror = () => {
-            showValidation('Ֆայլը կարդալիս սխալ տեղի ունեցավ:', 'Ներմուծման սխալ');
+            alert("Error reading file.");
+            event.target.value = null;
         };
         reader.readAsText(file);
-        // Reset file input to allow re-importing the same file
-        e.target.value = null; 
     };
-
-    const processImportCsv = (csvText) => {
-        const config = DEVICE_CONFIG[currentTab];
-        const requiredFields = config.fields.filter(f => f.required);
-        const requiredHeaderLabels = requiredFields.map(f => f.label);
-        const fieldKeys = config.fields.map(f => f.id);
-        const labelToKeyMap = config.fields.reduce((acc, field) => {
-            acc[field.label.toLowerCase()] = field.id;
-            return acc;
-        }, {});
-
-        if (csvText.startsWith('\uFEFF')) { // Handle BOM
-            csvText = csvText.substring(1);
-        }
-        
-        let lines = csvText.trim().split(/\r?\n/);
-        
-        if (lines.length === 0 || (lines.length === 1 && !lines[0].trim())) {
-            // Շտկված Import Error Տեքստ (Դատարկ ֆայլի համար)
-            showValidation('CSV ֆայլը դատարկ է:', 'Ներմուծման սխալ');
-            return;
-        }
-        
-        // Simple header parsing (assuming first line is header)
-        const headerLine = lines.shift().trim();
-        const headers = [];
-        const headerRegex = /(?:"([^"]*(?:""[^"]*)*)"|([^,]*))(?:,|$)/g; 
-        let headerMatch;
-        while (headerMatch = headerRegex.exec(headerLine)) {
-             const header = headerMatch[1] !== undefined ? headerMatch[1].replace(/""/g, '"') : headerMatch[2];
-             headers.push(header.trim());
-             if (!headerMatch[0].endsWith(',')) break;
-        }
-
-        const normalizedHeaders = headers.map(h => h.toLowerCase());
-
-        // Check if required headers exist (by label)
-        const missingHeaders = requiredHeaderLabels.filter(reqLabel => !normalizedHeaders.includes(reqLabel.toLowerCase()));
-        if (missingHeaders.length > 0) {
-            // Շտկված Import Error Տեքստ (Բացակայող վերնագրեր)
-            showValidation(`CSV ֆայլի վերնագրերը սխալ են: Բացակայում են պարտադիր դաշտերը՝ ${missingHeaders.join(', ')}։`, 'Ներմուծման սխալ');
-            return;
-        }
-        
-        const newRecords = [];
-        let importedCount = 0;
-        
-        // Prepare mapping of CSV index to internal key
-        const indexToKeyMap = headers.map(header => labelToKeyMap[header.toLowerCase()]);
-
-        let rowErrorCount = 0;
-        
-        lines.forEach(line => {
-            if (!line.trim()) return;
-            
-            const values = [];
-            const valueRegex = /(?:"([^"]*(?:""[^"]*)*)"|([^,]*))(?:,|$)/g; 
-            let valueMatch;
-            while ((valueMatch = valueRegex.exec(line)) !== null) {
-                 const value = valueMatch[1] !== undefined ? valueMatch[1].replace(/""/g, '"') : valueMatch[2];
-                 values.push(value);
-            }
-            
-            const record = {};
-            let isValid = true;
-            let hasData = false;
-
-            // Map values to record object based on header position
-            indexToKeyMap.forEach((key, index) => {
-                if (key && values[index] !== undefined) {
-                    const value = values[index];
-                    record[key] = value;
-                    if (value && value.trim() !== '') {
-                        hasData = true;
-                    }
-                    // Check required fields again based on mapped key
-                    if (requiredFields.map(f=>f.id).includes(key) && (!value || !value.trim())) {
-                        isValid = false;
-                    }
-                }
-            });
-
-            // Ensure all expected keys are present, even if imported value was missing (e.g. for non-required fields not in CSV)
-            fieldKeys.forEach(key => {
-                if (record[key] === undefined) {
-                    record[key] = '';
-                }
-            });
-
-            if (isValid && hasData) {
-                newRecords.push({ id: crypto.randomUUID(), ...record });
-                importedCount++;
-            } else if (!isValid) {
-                rowErrorCount++;
-            }
-        });
-
-        if (newRecords.length > 0) {
-            allRecords[currentTab].unshift(...newRecords);
-            saveRecords(currentTab);
-            currentPage = 1;
-            renderTable();
-            showValidation(`**${config.title}** բաժին ավելացվեց **${importedCount}** գրառում։${rowErrorCount > 0 ? `<br><span class="text-yellow-400">Ներմուծման ընթացքում բաց թողնվեց ${rowErrorCount} տող (բացակայող պարտադիր դաշտեր):</span>` : ''}`, 'Import Հաջողություն');
-        } else {
-            // Շտկված Import Error Տեքստ (Ներմուծվող վավեր գրառումներ չկան)
-            showValidation('Ներմուծվող ֆայլում չկան վավեր գրառումներ կամ բացակայում են պարտադիր դաշտերը:', 'Ներմուծման սխալ');
-        }
-    };
-
 
     // --- Event Listeners ---
     addButton.addEventListener('click', handleAddClick);
+    deleteAllButton.addEventListener('click', handleDeleteAllRequest);
+    exportButton.addEventListener('click', handleExportClick);
+    importButton.addEventListener('click', handleImportClick);
+    importFileInput.addEventListener('change', handleFileSelect);
     
     searchInput.addEventListener('input', () => {
         currentPage = 1;
         renderTable();
     });
     
-    deviceForm.addEventListener('submit', handleFormSubmit);
-
-    // Tab Listeners
-    tabButtons.forEach(button => {
-        button.addEventListener('click', (e) => switchTab(e.target.dataset.tab));
-    });
+    ipForm.addEventListener('submit', handleFormSubmit);
 
     // Pagination Listeners
     prevPageButton.addEventListener('click', () => {
@@ -883,7 +710,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     nextPageButton.addEventListener('click', () => {
-        const totalRecords = getFilteredRecords().length;
+        const totalRecords = ipRecords.filter(r => JSON.stringify(r).toLowerCase().includes(searchInput.value.toLowerCase())).length;
         const totalPages = Math.ceil(totalRecords / recordsPerPage);
         if (currentPage < totalPages) {
             currentPage++;
@@ -893,33 +720,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Modal Close Listeners
     formCancelButton.addEventListener('click', () => closeModal(formModal));
-    confirmCancelButton.addEventListener('click', () => {
-        deletePasswordInput.value = ''; // Clear input on cancel
-        confirmDeleteButton.disabled = true; // Disable button on cancel
-        closeModal(confirmationModal)
-    });
+    confirmCancelButton.addEventListener('click', () => closeModal(confirmationModal));
     confirmDeleteButton.addEventListener('click', handleDeleteConfirm);
     validationCloseButton.addEventListener('click', () => closeModal(validationModal));
+    importSuccessCloseButton.addEventListener('click', () => closeModal(importSuccessModal));
+    confirmAllCancelButton.addEventListener('click', () => closeModal(deleteAllConfirmationModal));
+    confirmAllDeleteButton.addEventListener('click', handleDeleteAllConfirm);
 
-    // Export/Import Listeners
-    exportButton.addEventListener('click', handleExport);
-    importFileInput.addEventListener('change', handleImport);
-
-    // Password input listener for enabling/disabling Delete button
-    deletePasswordInput.addEventListener('input', () => {
-        // Գաղտնաբառի ստուգումը DELETE! արժեքով
-        confirmDeleteButton.disabled = deletePasswordInput.value !== DELETE_PASSWORD;
-    });
-
-    // Delegate events for action buttons in the table (CRUD) - Շտկված է
+    // Delegate events for action buttons in the table
+    // Այս հատվածը ճիշտ է և թույլ է տալիս աշխատել CRUD կոճակներին
     tableBody.addEventListener('click', (e) => {
-        // Փնտրել ամենամոտ կոճակը, որն ունի data-action ատրիբուտ
         const button = e.target.closest('button[data-action]');
         if (button) {
             const action = button.dataset.action;
-            // Գտնել տողի ID-ն
             const row = button.closest('tr');
-            const id = row ? row.dataset.id : null;
+            const id = row.dataset.id;
             if (id) {
                 if (action === 'edit') handleEditClick(id);
                 if (action === 'delete') handleDeleteRequest(id);
@@ -930,7 +745,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Initialization ---
     loadRecords();
-    switchTab(currentTab); // Initial render will happen here
+    renderTable();
 });
 </script>
 

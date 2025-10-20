@@ -2,8 +2,8 @@
 <html lang="hy">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Device List Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>IP Address List Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -170,7 +170,7 @@
         <div class="bg-secondary rounded-lg shadow-xl w-full max-w-sm">
             <div class="p-6">
                 <h2 class="text-xl font-bold mb-4 text-text-primary">Ջնջումը հաստատել</h2>
-                <p class="text-text-secondary mb-4">Վստա՞հ եք, որ ցանկանում եք ջնջել: Մուտքագրեք գաղտնաբառը՝ հաստատելու համար։</p>
+                <p class="text-text-secondary mb-4">Վստա՞հ եք, որ ցանկանում եք ջնջել: Մուտքագրեք գաղտնաբառը (<span class="font-bold text-red-400">DELETE!</span>)՝ հաստատելու համար։</p>
                 <input type="password" id="delete-password-input" class="w-full bg-primary border border-accent rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary mb-6" placeholder="Գաղտնաբառ">
                 <div class="flex justify-end gap-4">
                     <button id="confirm-cancel-button" class="py-2 px-4 bg-accent hover:bg-gray-600 text-text-primary font-semibold rounded-lg transition-colors duration-300">Չեղարկել</button>
@@ -184,7 +184,7 @@
         <div class="bg-secondary rounded-lg shadow-xl w-full max-w-sm">
             <div class="p-6">
                 <h2 class="text-xl font-bold mb-4 text-text-primary">Բոլորը ջնջել</h2>
-                <p class="text-text-secondary mb-4">Վստա՞հ եք, որ ցանկանում եք ջնջել **բոլոր** գրառումները: Այս գործողությունը անդառնալի է։ Մուտքագրեք գաղտնաբառը։</p>
+                <p class="text-text-secondary mb-4">Վստա՞հ եք, որ ցանկանում եք ջնջել **բոլոր** գրառումները: Այս գործողությունը անդառնալի է։ Մուտքագրեք գաղտնաբառը (<span class="font-bold text-red-400">DELETE!</span>)։</p>
                 <input type="password" id="delete-all-password-input" class="w-full bg-primary border border-accent rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary mb-6" placeholder="Գաղտնաբառ">
                 <div class="flex justify-end gap-4">
                     <button id="confirm-all-cancel-button" class="py-2 px-4 bg-accent hover:bg-gray-600 text-text-primary font-semibold rounded-lg transition-colors duration-300">Չեղարկել</button>
@@ -276,7 +276,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const DELETE_PASSWORD = 'Delete'; // The required password for deletion
+    // Փոխված գաղտնաբառը՝ ըստ պահանջի
+    const DELETE_PASSWORD = 'DELETE!'; 
 
     // State
     let allRecords = {}; // Stores all records for all tabs
@@ -571,7 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
         openModal(validationModal, title);
     };
 
-    // --- Event Handlers ---
+    // --- Event Handlers (CRUD) ---
     const handleAddClick = () => {
         editingRecordId = null;
         deviceForm.reset();
@@ -803,15 +804,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Simple splitting by comma (does not handle quoted commas properly, but fine for basic data)
             // A more robust CSV parser would be needed for complex cases.
+            // Using a simple regex to handle comma splitting outside of quotes might be better, but this should suffice for typical data.
             const values = line.split(',').map(v => v.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
             
             const record = {};
             let isValid = true;
 
+            // Basic validation for required fields
             requiredHeaders.forEach(reqHeader => {
                 const headerIndex = headers.indexOf(reqHeader);
                 if (headerIndex === -1 || !values[headerIndex] || !values[headerIndex].trim()) {
-                    // Skip invalid records for simplicity
                     isValid = false;
                 }
             });
@@ -889,13 +891,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Password input listeners for enabling/disabling Delete buttons
     deletePasswordInput.addEventListener('input', () => {
+        // Գաղտնաբառի ստուգումը նոր DELETE! արժեքով
         confirmDeleteButton.disabled = deletePasswordInput.value !== DELETE_PASSWORD;
     });
     deleteAllPasswordInput.addEventListener('input', () => {
+        // Գաղտնաբառի ստուգումը նոր DELETE! արժեքով
         confirmAllDeleteButton.disabled = deleteAllPasswordInput.value !== DELETE_PASSWORD;
     });
 
-    // Delegate events for action buttons in the table
+    // Delegate events for action buttons in the table (CRUD)
     tableBody.addEventListener('click', (e) => {
         const button = e.target.closest('button[data-action]');
         if (button) {

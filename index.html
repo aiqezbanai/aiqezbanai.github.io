@@ -104,3 +104,163 @@
         </div>
       </div>
     </div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  let ipRecords = [];
+  let activeTab = 'Users';
+  let pendingDeleteId = null;
+
+  const tableBody = document.getElementById('ip-table-body');
+  const searchInput = document.getElementById('search-input');
+  const passwordModal = document.getElementById('password-delete-modal');
+  const passwordInput = document.getElementById('delete-password-input');
+  const passwordCancel = document.getElementById('delete-password-cancel');
+  const passwordConfirm = document.getElementById('delete-password-confirm');
+  const importFileInput = document.getElementById('import-file-input');
+  const importButton = document.getElementById('import-button');
+  const exportButton = document.getElementById('export-button');
+  const deleteAllButton = document.getElementById('delete-all-button');
+  const tabButtons = document.querySelectorAll('.tab-button');
+
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      activeTab = button.dataset.tab;
+      tabButtons.forEach(btn => btn.classList.remove('bg-highlight'));
+      button.classList.add('bg-highlight');
+      renderTable();
+    });
+  });
+
+  passwordCancel.onclick = () => {
+    passwordModal.classList.add('hidden');
+    passwordInput.value = '';
+    pendingDeleteId = null;
+  };
+
+  passwordConfirm.onclick = () => {
+    if (passwordInput.value === 'DELETE!') {
+      ipRecords = ipRecords.filter(r => r.id !== pendingDeleteId);
+      saveRecords();
+      renderTable();
+      passwordModal.classList.add('hidden');
+      passwordInput.value = '';
+      pendingDeleteId = null;
+    } else {
+      passwordInput.classList.add('border-red-500');
+      passwordInput.value = '';
+      passwordInput.placeholder = 'Սխալ գաղտնաբառ';
+    }
+  };
+
+  importButton.onclick = () => importFileInput.click();
+
+  importFileInput.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target.result;
+      const lines = text.trim().split('\n');
+      const headers = lines[0].split(',');
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',');
+        const record = {};
+        headers.forEach((h, idx) => {
+          record[h.trim()] = values[idx]?.trim() || '';
+        });
+        record.id = crypto.randomUUID();
+        record.category = activeTab;
+        ipRecords.push(record);
+      }
+      saveRecords();
+      renderTable();
+    };
+    reader.readAsText(file);
+  };
+
+  exportButton.onclick = () => {
+    const filtered = ipRecords.filter(r => r.category === activeTab);
+    if (filtered.length === 0) return;
+    const headers = ['department','vlan','subnetMask','defaultGateway','usableIPs','networkAddress','broadcastAddress','notes','category'];
+    const csvRows = [headers.join(',')];
+    filtered.forEach(record => {
+      const row = headers.map(h => `"${record[h] || ''}"`).join(',');
+      csvRows.push(row);
+    });
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${activeTab}_records.csv`);
+    link.click();
+  };
+
+  const saveRecords = () => {
+    localStorage.setItem('ipRecords', JSON.stringify(ipRecords));
+  };
+
+  const loadRecords = () => {
+    const saved = localStorage.getItem('ipRecords');
+    ipRecords = saved ? JSON.parse(saved) : [];
+  };
+
+  const renderTable = () => {
+    const filtered = ipRecords.filter(r => r.category === activeTab);
+    tableBody.innerHTML = '';
+    filtered.forEach((record, index) => {
+      const row = document.createElement('tr');
+      row.dataset.id = record.id;
+      row.innerHTML = `
+        <td class="px-5 py-3">${index + 1}</td>
+        <td class="px-5 py-3">${record.department || ''}</td>
+        <td class="px-5 py-3">${record.vlan || ''}</td>
+        <td class="px-5 py-3">${record.subnetMask || ''}</td>
+        <td class="px-5 py-3">${record.defaultGateway || ''}</td>
+        <td class="px-5 py-3">${record.usableIPs || ''}</td>
+        <td class="px-5 py-3">${record.networkAddress || ''}</td>
+        <td class="px-5 py-3">${record.broadcastAddress || ''}</td>
+        <td class="px-5 py-3">${record.notes || ''}</td>
+        <td class="px-5 py-3 text-center">
+          <button class="duplicate-btn text-green-400 mr-2">Duplicate</button>
+          <button class="edit-btn text-blue-400 mr-2">Rename</button>
+          <button class="delete-btn text-red-400">Delete</button>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    });
+
+    tableBody.querySelectorAll('tr').forEach(row => {
+      const id = row.dataset.id;
+      row.querySelector('.duplicate-btn').onclick = () => {
+        const original = ipRecords.find(r => r.id === id);
+        if (original) {
+          const copy = { ...original, id: crypto.randomUUID(), department: original.department + ' (copy)' };
+          ipRecords.push(copy);
+          saveRecords();
+          renderTable();
+        }
+      };
+      row.querySelector('.edit-btn').onclick = () => {
+        const record = ipRecords.find(r => r.id === id);
+        if (record) {
+          const newName = prompt('Նոր անվանում:', record.department);
+          if (newName !== null) {
+            record.department = newName;
+            saveRecords();
+            renderTable();
+          }
+        }
+      };
+      row.querySelector('.delete-btn').onclick = () => {
+        pendingDeleteId = id;
+        passwordModal.classList.remove('hidden');
+      };
+    });
+  };
+
+  loadRecords();
+  renderTable();
+});
+</script>
+</body>
+</html>

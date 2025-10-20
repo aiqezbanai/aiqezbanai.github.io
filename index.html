@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>IP Address List Manager</title>
+    <title>Device List Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -56,15 +56,14 @@
     <div class="container mx-auto p-4 sm:p-6 lg:p-8">
         <header class="mb-6">
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-text-primary">
-                    IP Address List
+                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-text-primary">Device List Manager
                 </h1>
                 <div class="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-4">
                     <div class="relative w-full sm:w-64">
                         <input
                           id="search-input"
                           type="text"
-                          placeholder="Որոնում..."
+                          placeholder="Որոնել..."
                           class="w-full bg-secondary border border-accent rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-highlight text-text-primary placeholder-text-secondary"
                         />
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -77,12 +76,12 @@
                     </button>
                     <button id="import-button" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l-3.75 3.75M12 9.75l3.75 3.75M3 17.25V6.75A2.25 2.25 0 015.25 4.5h13.5A2.25 2.25 0 0121 6.75v10.5A2.25 2.25 0 0118.75 19.5H5.25A2.25 2.25 0 013 17.25z"></path></svg>
-                        <span>IMPORT</span>
+                        <span>Ներմուծել CSV</span>
                     </button>
                     <input type="file" id="import-file-input" class="hidden" accept=".csv, text/csv">
                     <button id="export-button" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"></path></svg>
-                        <span>EXPORT</span>
+                        <span>Արտահանել CSV</span>
                     </button>
                     <button id="delete-all-button" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.124-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.077-2.09.921-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path></svg>
@@ -95,7 +94,7 @@
         <main>
             <div id="no-records-message" class="hidden text-center py-16 bg-secondary rounded-lg">
                 <h2 class="text-xl text-text-secondary">Գրառումներ չկան</h2>
-                <p class="mt-2 text-text-secondary">Սեղմեք "Ավելացնել"՝ նոր IP հասցե ավելացնելու համար:</p>
+                <p class="mt-2 text-text-secondary">Սեղմեք «Ավելացնել» նոր IP հասցե ավելացնելու համար:</p>
             </div>
             <div id="table-container" class="bg-secondary shadow-lg rounded-lg overflow-hidden">
                 <div class="overflow-x-auto custom-scrollbar">
@@ -197,7 +196,7 @@
         <div class="bg-secondary rounded-lg shadow-xl w-full max-w-sm">
             <div class="p-6">
                 <h2 class="text-xl font-bold mb-4 text-text-primary">Հաստատում</h2>
-                <p class="text-text-secondary mb-6">Վստա՞հ եք, որ ցանկանում եք ջնջել բոլոր գրառումները: Այս գործողությունը անդառնալի է։</p>
+                <p class="text-text-secondary mb-6">Վստա՞հ եք, որ ցանկանում եք ջնջել բոլոր գրառումները: Այս գործողությունը չեղարկել հնարավոր չէ:</p>
                 <div class="flex justify-end gap-4">
                     <button id="confirm-all-cancel-button" class="py-2 px-4 bg-accent hover:bg-gray-600 text-text-primary font-semibold rounded-lg transition-colors duration-300">Չեղարկել</button>
                     <button id="confirm-all-delete-button" class="py-2 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-300">Այո, ջնջել</button>
@@ -221,7 +220,7 @@
     <div id="import-success-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center p-4">
         <div class="bg-secondary rounded-lg shadow-xl w-full max-w-sm">
             <div class="p-6 text-center">
-                <h2 class="text-xl font-bold mb-4 text-text-primary">Ներմուծումը հաջողվեց</h2>
+                <h2 class="text-xl font-bold mb-4 text-text-primary">Հաջողված ներմուծում</h2>
                 <p id="import-success-message" class="text-text-secondary mb-6"></p>
                 <div class="flex justify-center gap-4">
                     <button id="import-success-close-button" class="py-2 px-6 bg-highlight hover:bg-teal-500 text-white font-semibold rounded-lg transition-colors duration-300">Փակել</button>
